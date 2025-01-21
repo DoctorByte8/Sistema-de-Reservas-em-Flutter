@@ -1,7 +1,18 @@
+
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  //await SudokuDB().database;
+  runApp(
+    MaterialApp(
+      title: 'ReServe',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: MainApp(),
+      initialRoute: '/',
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {

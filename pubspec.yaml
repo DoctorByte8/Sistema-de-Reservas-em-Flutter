@@ -9,11 +9,21 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  sqflite: ^2.2.8
+  sqflite_common_ffi: ^2.1.0
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.1.1
+  image_picker: ^1.0.4
+  http: ^1.1.0
+  intl: ^0.18.1
+  path: ^1.8.3
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  sqflite_common_ffi:
 
 flutter:
   uses-material-design: true

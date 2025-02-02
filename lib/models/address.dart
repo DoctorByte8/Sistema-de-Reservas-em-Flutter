@@ -1,12 +1,11 @@
 class Address {
-  final int? id; // ID do endereço (chave primária, pode ser nulo ao criar um novo endereço)
-  final String cep; // CEP do endereço (único)
-  final String logradouro; // Logradouro (rua/avenida)
-  final String bairro; // Bairro
-  final String localidade; // Cidade
-  final String uf; // Unidade Federativa (estado, abreviação)
-  final String estado; // Nome completo do estado
-
+  final int? id;
+  final String cep;
+  final String logradouro;
+  final String bairro;
+  final String localidade;
+  final String uf;
+  final String estado;
   Address({
     this.id,
     required this.cep,
@@ -16,8 +15,6 @@ class Address {
     required this.uf,
     required this.estado,
   });
-
-  // Converte o objeto Address para um Map<String, dynamic> (usado em operações com o banco de dados)
   Map<String, dynamic> toMap() {
     return {
       'cep': cep,
@@ -28,8 +25,6 @@ class Address {
       'estado': estado,
     };
   }
-
-  // Cria um objeto Address a partir de um Map<String, dynamic> (usado ao consultar o banco de dados)
   factory Address.fromMap(Map<String, dynamic> map) {
     return Address(
       id: map['id'],

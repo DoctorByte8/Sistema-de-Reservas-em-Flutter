@@ -2,54 +2,45 @@ import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 
 class HostAuthScreen extends StatefulWidget {
+  const HostAuthScreen({super.key});
   @override
   _HostAuthScreenState createState() => _HostAuthScreenState();
 }
-
 class _HostAuthScreenState extends State<HostAuthScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _nameController = TextEditingController(); // Apenas para registro
-  bool _isLoginMode = true; // Alterna entre login e registro
-  bool _isLoading = false; // Indica se uma operação está em andamento
-
+  final _nameController = TextEditingController();
+  bool _isLoginMode = true;
+  bool _isLoading = false;
   final AuthService _authService = AuthService();
-
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() {
       _isLoading = true;
     });
-
     try {
       if (_isLoginMode) {
-        // Login
         final user = await _authService.login(
           _emailController.text,
           _passwordController.text,
         );
-
         if (user != null) {
           Navigator.pushReplacementNamed(context, '/host-home', arguments: user.id);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Credenciais inválidas. Tente novamente.')),
+            const SnackBar(content: Text('Credenciais inválidas. Tente novamente.')),
           );
         }
       } else {
-        // Registro
         final userId = await _authService.register(
           _nameController.text,
           _emailController.text,
           _passwordController.text,
         );
-
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Usuário registrado com sucesso!')),
+          const SnackBar(content: Text('Usuário registrado com sucesso!')),
         );
-
         Navigator.pushReplacementNamed(context, '/host-home', arguments: userId);
       }
     } catch (e) {
@@ -62,7 +53,6 @@ class _HostAuthScreenState extends State<HostAuthScreen> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +68,7 @@ class _HostAuthScreenState extends State<HostAuthScreen> {
               if (!_isLoginMode)
                 TextFormField(
                   controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Nome'),
+                  decoration: const InputDecoration(labelText: 'Nome'),
                   validator: (value) {
                     if (value == null || value.isEmpty) return 'Por favor, insira seu nome.';
                     return null;
@@ -86,7 +76,7 @@ class _HostAuthScreenState extends State<HostAuthScreen> {
                 ),
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Por favor, insira seu email.';
@@ -96,7 +86,7 @@ class _HostAuthScreenState extends State<HostAuthScreen> {
               ),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Senha'),
+                decoration: const InputDecoration(labelText: 'Senha'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Por favor, insira sua senha.';
@@ -104,9 +94,9 @@ class _HostAuthScreenState extends State<HostAuthScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               if (_isLoading)
-                Center(child: CircularProgressIndicator())
+                const Center(child: CircularProgressIndicator())
               else
                 ElevatedButton(
                   onPressed: _submitForm,

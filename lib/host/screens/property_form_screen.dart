@@ -8,14 +8,11 @@ import '../../models/property.dart';
 import '../../database/database_helper.dart';
 
 class PropertyFormScreen extends StatefulWidget {
-  final int userId; // ID do usuário logado
-
-  PropertyFormScreen({required this.userId});
-
+  final int userId;
+  const PropertyFormScreen({super.key, required this.userId});
   @override
   _PropertyFormScreenState createState() => _PropertyFormScreenState();
 }
-
 class _PropertyFormScreenState extends State<PropertyFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _cepController = TextEditingController();
@@ -25,21 +22,17 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
   final _priceController = TextEditingController();
   final _maxGuestController = TextEditingController();
 
-  Address? _address; // Endereço obtido via API ViaCEP
-  List<XFile> _images = []; // Lista de imagens selecionadas
-  XFile? _thumbnail; // Imagem principal (thumbnail)
-
+  Address? _address;
+  final List<XFile> _images = [];
+  XFile? _thumbnail;
   final PropertyService _propertyService = PropertyService();
-
-  // Busca o endereço usando o CEP fornecido
   Future<void> _searchAddress() async {
     if (_cepController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, insira um CEP válido.')),
+        const SnackBar(content: Text('Por favor, insira um CEP válido.')),
       );
       return;
     }
-
     try {
       final data = await ViaCepService.fetchAddress(_cepController.text);
       setState(() {
@@ -49,7 +42,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
           bairro: data['bairro'] ?? '',
           localidade: data['localidade'] ?? '',
           uf: data['uf'] ?? '',
-          estado: data['uf'], // Estado é igual à UF
+          estado: data['uf'],
         );
       });
     } catch (e) {
@@ -58,8 +51,6 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
       );
     }
   }
-
-  // Seleciona imagens para a propriedade
   Future<void> _pickImages() async {
     try {
       final images = await ImageUtils.pickMultipleImages();
@@ -72,8 +63,6 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
       );
     }
   }
-
-  // Seleciona a imagem principal (thumbnail)
   Future<void> _pickThumbnail() async {
     try {
       final thumbnail = await ImageUtils.pickSingleImage();
@@ -86,44 +75,33 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
       );
     }
   }
-
   Future<void> _submitForm() async {
   if (!_formKey.currentState!.validate()) return;
-
   if (_address == null) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Por favor, busque um endereço válido.')),
+      const SnackBar(content: Text('Por favor, busque um endereço válido.')),
     );
     return;
   }
-
   if (_thumbnail == null) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Por favor, selecione uma imagem principal.')),
+      const SnackBar(content: Text('Por favor, selecione uma imagem principal.')),
     );
     return;
   }
-
   try {
     final db = DatabaseHelper.instance;
-
-    // Verifica se o CEP já existe
     final existingAddress = await db.query(
       'address',
       where: 'cep = ?',
       whereArgs: [_address!.cep],
     );
-
     int addressId;
     if (existingAddress.isNotEmpty) {
-      // Reutiliza o endereço existente
       addressId = existingAddress.first['id'];
     } else {
-      // Insere um novo endereço
       addressId = await db.insert('address', _address!.toMap());
     }
-
-    // Cria a propriedade no banco de dados
     final property = Property(
       userId: widget.userId,
       addressId: addressId,
@@ -135,18 +113,13 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
       maxGuest: int.parse(_maxGuestController.text),
       thumbnail: _thumbnail!.path,
     );
-
     final propertyId = await db.insert('property', property.toMap());
-
-    // Salva as imagens da propriedade no banco de dados
     for (var image in _images) {
       await db.insert('images', {'property_id': propertyId, 'path': image.path});
     }
-
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Propriedade cadastrada com sucesso!')),
+      const SnackBar(content: Text('Propriedade cadastrada com sucesso!')),
     );
-
     Navigator.pop(context);
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -154,13 +127,11 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
     );
   }
 }
-
-
   @override
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: Text('Cadastrar Propriedade'),
+      title: const Text('Cadastrar Propriedade'),
     ),
     body: Padding(
       padding: const EdgeInsets.all(16.0),
@@ -168,10 +139,9 @@ Widget build(BuildContext context) {
         key: _formKey,
         child: ListView(
           children: [
-            // Campo para o CEP
             TextFormField(
               controller: _cepController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'CEP',
                 border: OutlineInputBorder(),
               ),
@@ -181,36 +151,32 @@ Widget build(BuildContext context) {
             ),
             ElevatedButton(
               onPressed: _searchAddress,
-              child: Text('Buscar Endereço'),
+              child: const Text('Buscar Endereço'),
             ),
             if (_address != null)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text('Logradouro: ${_address!.logradouro}'),
                   Text('Bairro: ${_address!.bairro}'),
                   Text('Cidade/UF: ${_address!.localidade}/${_address!.uf}'),
                 ],
               ),
-            SizedBox(height: 20),
-
-            // Campo para o título da propriedade
+            const SizedBox(height: 20),
             TextFormField(
               controller: _titleController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Título',
                 border: OutlineInputBorder(),
               ),
               validator:
                   (value) => value == null || value.isEmpty ? 'Informe o título' : null,
             ),
-            SizedBox(height: 10),
-
-            // Campo para a descrição da propriedade
+            const SizedBox(height: 10),
             TextFormField(
               controller: _descriptionController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Descrição',
                 border: OutlineInputBorder(),
               ),
@@ -218,74 +184,60 @@ Widget build(BuildContext context) {
               validator:
                   (value) => value == null || value.isEmpty ? 'Informe a descrição' : null,
             ),
-            SizedBox(height: 10),
-
-            // Campo para o número do imóvel
+            const SizedBox(height: 10),
             TextFormField(
               controller: _numberController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Número',
                 border: OutlineInputBorder(),
               ),
               keyboardType:
-                  TextInputType.number, // Apenas números são permitidos
+                  TextInputType.number,
               validator:
                   (value) => value == null || value.isEmpty ? 'Informe o número' : null,
             ),
-            SizedBox(height: 10),
-
-            // Campo para o preço da propriedade
+            const SizedBox(height: 10),
             TextFormField(
               controller: _priceController,
               decoration:
-                  InputDecoration(labelText: 'Preço', border: OutlineInputBorder()),
+                  const InputDecoration(labelText: 'Preço', border: OutlineInputBorder()),
               keyboardType:
-                  TextInputType.numberWithOptions(decimal: true), // Permite números decimais
+                  const TextInputType.numberWithOptions(decimal: true),
               validator:
                   (value) => value == null || value.isEmpty ? 'Informe o preço' : null,
             ),
-            SizedBox(height: 10),
-
-            // Campo para a quantidade máxima de hóspedes
+            const SizedBox(height: 10),
             TextFormField(
               controller: _maxGuestController,
               decoration:
-                  InputDecoration(labelText: 'Máximo de Hóspedes', border: OutlineInputBorder()),
+                  const InputDecoration(labelText: 'Máximo de Hóspedes', border: OutlineInputBorder()),
               keyboardType:
-                  TextInputType.number, // Apenas números são permitidos
+                  TextInputType.number,
               validator:
                   (value) => value == null || value.isEmpty ? 'Informe a capacidade máxima' : null,
             ),
-            SizedBox(height: 20),
-
-            // Botão para selecionar a imagem principal (thumbnail)
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _pickThumbnail,
               child:
                   Text(_thumbnail == null ? 'Selecionar Thumbnail' : 'Thumbnail Selecionada'),
             ),
             if (_thumbnail != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
                 child:
                     Text('Thumbnail selecionada com sucesso!', style: TextStyle(color: Colors.green)),
               ),
-
-            SizedBox(height: 20),
-
-            // Botão para selecionar múltiplas imagens
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _pickImages,
               child:
                   Text(_images.isEmpty ? 'Adicionar Imagens' : '${_images.length} Imagens Selecionadas'),
             ),
-
-            SizedBox(height: 30),
-
-            // Botão para salvar a propriedade
+            const SizedBox(height: 30),
             ElevatedButton(
               onPressed: _submitForm,
-              child: Text('Salvar Propriedade'),
+              child: const Text('Salvar Propriedade'),
             ),
           ],
         ),

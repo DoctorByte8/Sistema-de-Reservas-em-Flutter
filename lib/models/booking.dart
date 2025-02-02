@@ -1,14 +1,13 @@
 class Booking {
-  final int? id; // ID da reserva (chave primária, pode ser nulo ao criar uma nova reserva)
-  final int userId; // ID do usuário que fez a reserva (chave estrangeira para a tabela "user")
-  final int propertyId; // ID da propriedade reservada (chave estrangeira para a tabela "property")
-  final String checkinDate; // Data de check-in
-  final String checkoutDate; // Data de check-out
-  final int totalDays; // Total de dias da reserva
-  final double totalPrice; // Preço total da reserva
-  final int amountGuest; // Número de hóspedes
-  final double? rating; // Avaliação da propriedade (opcional)
-
+  final int? id;
+  final int userId;
+  final int propertyId;
+  final String checkinDate;
+  final String checkoutDate;
+  final int totalDays;
+  final double totalPrice;
+  final int amountGuest;
+  final double? rating;
   Booking({
     this.id,
     required this.userId,
@@ -20,8 +19,6 @@ class Booking {
     required this.amountGuest,
     this.rating,
   });
-
-  // Converte o objeto Booking para um Map<String, dynamic> (usado em operações com o banco de dados)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -35,8 +32,6 @@ class Booking {
       'rating': rating,
     };
   }
-
-  // Cria um objeto Booking a partir de um Map<String, dynamic> (usado ao consultar o banco de dados)
   factory Booking.fromMap(Map<String, dynamic> map) {
     return Booking(
       id: map['id'],
@@ -47,7 +42,7 @@ class Booking {
       totalDays: map['total_days'],
       totalPrice: map['total_price'].toDouble(),
       amountGuest: map['amount_guest'],
-      rating: map['rating'] != null ? map['rating'].toDouble() : null,
+      rating: map['rating']?.toDouble(),
     );
   }
 }

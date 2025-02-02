@@ -1,11 +1,8 @@
-// lib/guest/screens/guest_home_screen.dart
 import 'package:flutter/material.dart';
 
 class GuestHomeScreen extends StatelessWidget {
-  final int? userId; // Pode ser nulo para convidados
-
-  const GuestHomeScreen({this.userId});
-
+  final int? userId;
+  const GuestHomeScreen({super.key, this.userId});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

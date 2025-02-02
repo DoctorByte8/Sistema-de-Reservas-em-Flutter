@@ -5,21 +5,19 @@ import '../../services/booking_service.dart';
 import '../../utils/date_formatter.dart';
 
 class BookingsScreen extends StatefulWidget {
+  const BookingsScreen({super.key});
   @override
   _BookingsScreenState createState() => _BookingsScreenState();
 }
-
 class _BookingsScreenState extends State<BookingsScreen> {
   late Future<List<Booking>> _bookingsFuture;
   final BookingService _bookingService = BookingService();
   final AuthService _authService = AuthService();
-
   @override
   void initState() {
     super.initState();
     _loadBookings();
   }
-
   void _loadBookings() async {
     final userId = await _authService.getCurrentUserId();
     if (userId != null) {
@@ -28,14 +26,13 @@ class _BookingsScreenState extends State<BookingsScreen> {
       _bookingsFuture = Future.value([]);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Minhas Reservas'),
+        title: const Text('Minhas Reservas'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -43,43 +40,39 @@ class _BookingsScreenState extends State<BookingsScreen> {
         future: _bookingsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
-
           if (snapshot.hasError) {
-            return Center(child: Text('Erro ao carregar reservas'));
+            return const Center(child: Text('Erro ao carregar reservas'));
           }
-
           final bookings = snapshot.data ?? [];
-
           if (bookings.isEmpty) {
-            return Center(child: Text('Nenhuma reserva encontrada'));
+            return const Center(child: Text('Nenhuma reserva encontrada'));
           }
-
           return ListView.builder(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             itemCount: bookings.length,
             itemBuilder: (context, index) {
               final booking = bookings[index];
               return Card(
-                margin: EdgeInsets.only(bottom: 16),
+                margin: const EdgeInsets.only(bottom: 16),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(16),
-                  leading: Icon(Icons.calendar_today, color: Colors.blue),
+                  contentPadding: const EdgeInsets.all(16),
+                  leading: const Icon(Icons.calendar_today, color: Colors.blue),
                   title: Text(
                     '${DateFormatter.formatDate(DateTime.parse(booking.checkinDate))} - '
                     '${DateFormatter.formatDate(DateTime.parse(booking.checkoutDate))}',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text('Dias: ${booking.totalDays}'),
                       Text('Hóspedes: ${booking.amountGuest}'),
                       Text(
                         'Total: R\$${booking.totalPrice.toStringAsFixed(2)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.green,
                           fontWeight: FontWeight.bold
                         ),
@@ -87,7 +80,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     ],
                   ),
                   trailing: booking.rating != null 
-                      ? Icon(Icons.star, color: Colors.amber)
+                      ? const Icon(Icons.star, color: Colors.amber)
                       : null,
                 ),
               );

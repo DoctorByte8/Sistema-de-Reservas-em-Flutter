@@ -4,10 +4,10 @@ import '../../models/property.dart';
 import '../../utils/date_formatter.dart';
 
 class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
-
 class _SearchScreenState extends State<SearchScreen> {
   final _formKey = GlobalKey<FormState>();
   final _stateController = TextEditingController();
@@ -16,13 +16,9 @@ class _SearchScreenState extends State<SearchScreen> {
   DateTime? _checkinDate;
   DateTime? _checkoutDate;
   int? _guestCount;
-
   List<Property> _searchResults = [];
   bool _isLoading = false;
-
   final PropertyService _propertyService = PropertyService();
-
-  // Seleciona uma data (check-in ou check-out)
   Future<void> _selectDate(BuildContext context, bool isCheckin) async {
     final pickedDate = await showDatePicker(
       context: context,
@@ -30,7 +26,6 @@ class _SearchScreenState extends State<SearchScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2026),
     );
-
     if (pickedDate != null) {
       setState(() {
         if (isCheckin) {
@@ -41,31 +36,24 @@ class _SearchScreenState extends State<SearchScreen> {
       });
     }
   }
-
-  // Realiza a busca com base nos filtros
   Future<void> _searchProperties() async {
     if (!_formKey.currentState!.validate()) return;
-
     if (_checkinDate == null || _checkoutDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, selecione as datas de check-in e check-out.')),
+        const SnackBar(content: Text('Por favor, selecione as datas de check-in e check-out.')),
       );
       return;
     }
-
     if (!DateFormatter.isValidDateRange(_checkinDate!, _checkoutDate!)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('A data de check-out deve ser posterior ao check-in.')),
+        const SnackBar(content: Text('A data de check-out deve ser posterior ao check-in.')),
       );
       return;
     }
-
     setState(() {
       _isLoading = true;
     });
-
     try {
-      // Simula a busca no banco de dados (implementação futura)
       final results = await _propertyService.searchProperties(
         state: _stateController.text,
         city: _cityController.text,
@@ -74,7 +62,6 @@ class _SearchScreenState extends State<SearchScreen> {
         checkout: _checkoutDate!,
         guestCount: _guestCount ?? 1,
       );
-
       setState(() {
         _searchResults = results;
       });
@@ -88,19 +75,18 @@ class _SearchScreenState extends State<SearchScreen> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Buscar Propriedades'),
+        title: const Text('Buscar Propriedades'),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () => Navigator.pushReplacementNamed(context, '/guest-auth'),
           ),
           IconButton(
-            icon: Icon(Icons.bookmark),
+            icon: const Icon(Icons.bookmark),
             onPressed: () => Navigator.pushNamed(context, '/my-bookings'),
           ),
         ],
@@ -111,34 +97,27 @@ class _SearchScreenState extends State<SearchScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              // Campo para o estado
               TextFormField(
                 controller: _stateController,
-                decoration: InputDecoration(labelText: 'Estado', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Estado', border: OutlineInputBorder()),
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Informe o estado' : null,
               ),
-              SizedBox(height: 10),
-
-              // Campo para a cidade
+              const SizedBox(height: 10),
               TextFormField(
                 controller: _cityController,
                 decoration:
-                    InputDecoration(labelText: 'Cidade', border: OutlineInputBorder()),
+                    const InputDecoration(labelText: 'Cidade', border: OutlineInputBorder()),
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Informe a cidade' : null,
               ),
-              SizedBox(height: 10),
-
-              // Campo para o bairro
+              const SizedBox(height: 10),
               TextFormField(
                 controller: _neighborhoodController,
                 decoration:
-                    InputDecoration(labelText: 'Bairro', border: OutlineInputBorder()),
+                    const InputDecoration(labelText: 'Bairro', border: OutlineInputBorder()),
               ),
-              SizedBox(height: 10),
-
-              // Campo para selecionar a data de check-in
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
@@ -147,13 +126,11 @@ class _SearchScreenState extends State<SearchScreen> {
                         : 'Check-in: ${DateFormatter.formatDate(_checkinDate!)}'),
                   ),
                   IconButton(
-                    icon: Icon(Icons.calendar_today),
+                    icon: const Icon(Icons.calendar_today),
                     onPressed: () => _selectDate(context, true),
                   ),
                 ],
               ),
-
-              // Campo para selecionar a data de check-out
               Row(
                 children: [
                   Expanded(
@@ -162,45 +139,36 @@ class _SearchScreenState extends State<SearchScreen> {
                         : 'Check-out: ${DateFormatter.formatDate(_checkoutDate!)}'),
                   ),
                   IconButton(
-                    icon: Icon(Icons.calendar_today),
+                    icon: const Icon(Icons.calendar_today),
                     onPressed: () => _selectDate(context, false),
                   ),
                 ],
               ),
-
-              SizedBox(height: 10),
-
-              // Campo para o número de hóspedes
+              const SizedBox(height: 10),
               TextFormField(
                 decoration:
-                    InputDecoration(labelText: 'Número de Hóspedes', border: OutlineInputBorder()),
+                    const InputDecoration(labelText: 'Número de Hóspedes', border: OutlineInputBorder()),
                 keyboardType:
-                    TextInputType.number, // Apenas números são permitidos
+                    TextInputType.number,
                 onChanged: (value) => setState(() {
                   if (value.isNotEmpty) {
                     _guestCount = int.tryParse(value);
                   }
                 }),
               ),
-
-              SizedBox(height: 20),
-
-              // Botão para buscar propriedades
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _searchProperties,
                 child:
                     Text(_isLoading ? 'Buscando...' : 'Buscar Propriedades'),
               ),
-
-              SizedBox(height: 20),
-
-              // Exibição dos resultados da busca
+              const SizedBox(height: 20),
               if (_searchResults.isNotEmpty)
                 ..._searchResults.map((property) => ListTile(
                       leading:
                           Image.network(property.thumbnail, width: 60, height: 60, fit: BoxFit.cover),
                       title:
-                          Text(property.title, style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(property.title, style: const TextStyle(fontWeight: FontWeight.bold)),
                       subtitle:
                           Text('Preço R\$${property.price.toStringAsFixed(2)}\nRating médio'),
                       onTap:

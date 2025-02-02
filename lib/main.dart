@@ -3,9 +3,9 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'host/screens/host_auth_screen.dart';
 import 'guest/screens/guest_auth_screen.dart';
-import 'host/screens/host_home_screen.dart'; // Importação adicionada
+import 'host/screens/host_home_screen.dart';
 import 'guest/screens/guest_home_screen.dart';
-import 'host/screens/property_form_screen.dart'; // Importe a tela
+import 'host/screens/property_form_screen.dart';
 import 'dart:io';
 
 
@@ -20,6 +20,7 @@ Future<void> main() async {
 }
 
 class BookingApp extends StatelessWidget {
+  const BookingApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,12 +35,12 @@ class BookingApp extends StatelessWidget {
         '/host-home': (context) => HostHomeScreen(
               userId: ModalRoute.of(context)!.settings.arguments as int,
             ),
-        '/guest-home': (context) => GuestHomeScreen(),
+        '/guest-home': (context) => const GuestHomeScreen(),
         '/property-form': (context) => PropertyFormScreen(
           userId: ModalRoute.of(context)!.settings.arguments as int,
         ),
       },
-      onUnknownRoute: (settings) => MaterialPageRoute( // Opcional: Página de erro
+      onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(
           body: Center(child: Text('Rota não encontrada: ${settings.name}')),
         ),
@@ -49,22 +50,23 @@ class BookingApp extends StatelessWidget {
 }
 
 class MainGatewayScreen extends StatelessWidget {
+  const MainGatewayScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Bem-vindo')),
+      appBar: AppBar(title: const Text('Bem-vindo')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/host'),
-              child: Text('Sou Anfitrião'),
+              child: const Text('Sou Anfitrião'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/guest'),
-              child: Text('Quero Reservar'),
+              child: const Text('Quero Reservar'),
             ),
           ],
         ),

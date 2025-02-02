@@ -4,20 +4,17 @@ import '../../services/property_service.dart';
 import '../widgets/property_item.dart';
 
 class PropertyListScreen extends StatelessWidget {
-  final int userId; // ID do anfitrião logado
-
-  PropertyListScreen({required this.userId});
-
+  final int userId;
+  const PropertyListScreen({super.key, required this.userId});
   @override
   Widget build(BuildContext context) {
     final PropertyService propertyService = PropertyService();
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Minhas Propriedades'),
+        title: const Text('Minhas Propriedades'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () {
               Navigator.pushNamed(context, '/property-form', arguments: userId);
             },
@@ -28,15 +25,13 @@ class PropertyListScreen extends StatelessWidget {
         future: propertyService.getPropertiesByUser(userId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Erro ao carregar propriedades.'));
+            return const Center(child: Text('Erro ao carregar propriedades.'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('Nenhuma propriedade cadastrada.'));
+            return const Center(child: Text('Nenhuma propriedade cadastrada.'));
           }
-
           final properties = snapshot.data!;
-
           return ListView.builder(
             itemCount: properties.length,
             itemBuilder: (context, index) {
@@ -47,28 +42,26 @@ class PropertyListScreen extends StatelessWidget {
                   final confirm = await showDialog<bool>(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      title: Text('Confirmar Exclusão'),
+                      title: const Text('Confirmar Exclusão'),
                       content:
-                          Text('Tem certeza que deseja excluir esta propriedade?'),
+                          const Text('Tem certeza que deseja excluir esta propriedade?'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop(false),
-                          child: Text('Cancelar'),
+                          child: const Text('Cancelar'),
                         ),
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop(true),
-                          child: Text('Excluir'),
+                          child: const Text('Excluir'),
                         ),
                       ],
                     ),
                   );
-
                   if (confirm == true) {
                     await propertyService.deleteProperty(property.id!);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Propriedade excluída com sucesso.')),
+                      const SnackBar(content: Text('Propriedade excluída com sucesso.')),
                     );
-                    // Atualiza a tela após exclusão
                     (context as Element).reassemble();
                   }
                 },

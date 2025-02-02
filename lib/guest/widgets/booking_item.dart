@@ -3,10 +3,8 @@ import '../../models/booking.dart';
 import '../../utils/date_formatter.dart';
 
 class BookingItem extends StatelessWidget {
-  final Booking booking; // Objeto de reserva a ser exibido
-
-  BookingItem({required this.booking});
-
+  final Booking booking;
+  const BookingItem({super.key, required this.booking});
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -16,34 +14,29 @@ class BookingItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Datas de check-in e check-out
             Text(
               '${DateFormatter.formatDate(DateTime.parse(booking.checkinDate))} - '
               '${DateFormatter.formatDate(DateTime.parse(booking.checkoutDate))}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
-
-            // Detalhes da reserva
+            const SizedBox(height: 8),
             Text('Dias reservados: ${booking.totalDays}'),
             Text('Número de hóspedes: ${booking.amountGuest}'),
             Text(
               'Valor total: R\$${booking.totalPrice.toStringAsFixed(2)}',
-              style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
-
-            // Avaliação (se disponível)
+            const SizedBox(height: 8),
             if (booking.rating != null)
               Row(
                 children: [
-                  Icon(Icons.star, color: Colors.amber),
-                  SizedBox(width: 4),
+                  const Icon(Icons.star, color: Colors.amber),
+                  const SizedBox(width: 4),
                   Text('Avaliação: ${booking.rating!.toStringAsFixed(1)}'),
                 ],
               )
             else
-              Text(
+              const Text(
                 'Sem avaliação',
                 style: TextStyle(color: Colors.grey),
               ),

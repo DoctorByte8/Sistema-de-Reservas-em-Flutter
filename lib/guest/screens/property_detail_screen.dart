@@ -8,13 +8,10 @@ import '../../services/auth_service.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
   final int propertyId;
-
-  const PropertyDetailScreen({required this.propertyId});
-
+  const PropertyDetailScreen({super.key, required this.propertyId});
   @override
   _PropertyDetailScreenState createState() => _PropertyDetailScreenState();
 }
-
 class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   late Future<Property?> _propertyFuture;
   final BookingService _bookingService = BookingService();
@@ -22,13 +19,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   DateTime? _checkinDate;
   DateTime? _checkoutDate;
   bool _isLoading = false;
-
   @override
   void initState() {
     super.initState();
     _propertyFuture = PropertyService().getPropertyById(widget.propertyId);
   }
-
   Future<void> _selectDate(BuildContext context, bool isCheckin) async {
     final pickedDate = await showDatePicker(
       context: context,
@@ -36,7 +31,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2026),
     );
-
     if (pickedDate != null) {
       setState(() {
         if (isCheckin) {
@@ -47,7 +41,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       });
     }
   }
-
   Future<void> _makeReservation(Property property) async {
     final userId = await _authService.getCurrentUserId();
     if (userId == null) {
@@ -56,43 +49,36 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       );
       return;
     }
-
     if (_checkinDate == null || _checkoutDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Selecione as datas de check-in e check-out')),
       );
       return;
     }
-
     if (!DateFormatter.isValidDateRange(_checkinDate!, _checkoutDate!)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Data de check-out deve ser posterior ao check-in')),
       );
       return;
     }
-
     setState(() => _isLoading = true);
-
     try {
       final isAvailable = await _bookingService.isPropertyAvailable(
         property.id!,
         _checkinDate!,
         _checkoutDate!,
       );
-
       if (!isAvailable) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Propriedade indisponível para estas datas')),
         );
         return;
       }
-
-      final totalPrice = await _bookingService.calculateTotalPrice(
+      final totalPrice = _bookingService.calculateTotalPrice(
         _checkinDate!,
         _checkoutDate!,
         property.price,
       );
-
       final booking = Booking(
         userId: userId,
         propertyId: property.id!,
@@ -102,9 +88,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         totalPrice: totalPrice,
         amountGuest: property.maxGuest,
       );
-
       await _bookingService.createBooking(booking);
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Reserva realizada com sucesso!')),
       );
@@ -117,7 +101,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       setState(() => _isLoading = false);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,13 +111,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-
           if (snapshot.hasError || !snapshot.hasData) {
             return const Center(child: Text('Erro ao carregar detalhes'));
           }
-
           final property = snapshot.data!;
-
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: ListView(
@@ -167,7 +147,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       ),
     );
   }
-
   Widget _buildDateSelector(String label, bool isCheckin) {
     return Row(
       children: [

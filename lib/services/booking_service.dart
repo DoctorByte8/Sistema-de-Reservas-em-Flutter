@@ -4,11 +4,9 @@ import '../models/booking.dart';
 
 class BookingService {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-
   Future<int> createBooking(Booking booking) async {
     return await _dbHelper.insert(DBConstants.bookingTable, booking.toMap());
   }
-
   Future<List<Booking>> getBookingsByUser(int userId) async {
     final db = await _dbHelper.database;
     final results = await db.query(
@@ -18,7 +16,6 @@ class BookingService {
     );
     return results.map((map) => Booking.fromMap(map)).toList();
   }
-
   Future<List<Booking>> getBookingsByProperty(int propertyId) async {
     final db = await _dbHelper.database;
     final results = await db.query(
@@ -28,7 +25,6 @@ class BookingService {
     );
     return results.map((map) => Booking.fromMap(map)).toList();
   }
-
   Future<bool> isPropertyAvailable(int propertyId, DateTime checkin, DateTime checkout) async {
     final db = await _dbHelper.database;
     final results = await db.rawQuery('''
@@ -48,14 +44,11 @@ class BookingService {
 
     return results.isEmpty;
   }
-
-  // Método corrigido
   double calculateTotalPrice(DateTime checkin, DateTime checkout, double dailyPrice) {
     final duration = checkout.difference(checkin);
     if (duration.isNegative) throw Exception('Intervalo de datas inválido');
-    return dailyPrice * (duration.inDays + 1); // Inclui o dia do check-in
+    return dailyPrice * (duration.inDays + 1);
   }
-
   Future<void> updateBookingRating(int bookingId, double rating) async {
     final db = await _dbHelper.database;
     await db.update(
@@ -65,14 +58,12 @@ class BookingService {
       whereArgs: [bookingId],
     );
   }
-
   Future<int> updateBooking(Booking booking) async {
     return await _dbHelper.update(
       DBConstants.bookingTable,
       booking.toMap(),
     );
   }
-
   Future<int> deleteBooking(int bookingId) async {
     return await _dbHelper.delete(
       DBConstants.bookingTable,
